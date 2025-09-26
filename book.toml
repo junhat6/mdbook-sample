@@ -1,0 +1,5 @@
+[book]
+authors = ["junichihattori"]
+language = "ja"
+src = "src"
+title = "mdbookSample"
