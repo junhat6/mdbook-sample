@@ -1,0 +1,46 @@
+name: Deploy-GitHubPages
+on:
+  push:
+    branches: [main]
+  #  paths:
+  #    - "src/**"
+  #    - "book.toml"
+  workflow_dispatch: # 手動実行ボタンを有効化
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup mdbook
+        uses: peaceiris/actions-mdbook@v2
+        with:
+          mdbook-version: "0.4.40"
+
+      # （プラグインを使うならここで cargo install する）
+      # - run: cargo install mdbook-katex@0.5.7
+
+      - name: Build mdbook
+        run: mdbook build
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./book
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
